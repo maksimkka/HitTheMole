@@ -1,4 +1,5 @@
-﻿using Code.Mole;
+﻿using Code.Logger;
+using Code.Mole;
 using Code.Pools;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
@@ -25,6 +26,7 @@ namespace Code.Spawner
 
             moleSpawnerData.MolesPool = molesPool;
             moleSpawnerData.SpawnDelay = _spawnerSettings.Value.SpawnDelay;
+            
         }
 
         private void InitMoles(Collider moleCollider)
@@ -38,7 +40,8 @@ namespace Code.Spawner
             moleCollider.GetComponent<MeshRenderer>().material = config.Color;
             moleData.MoleGameObject = moleCollider.gameObject;
             moleData.DefaultLifeTime = config.Lifetime;
-            moleData.Health = config.Health;
+            moleData.CurrentHealth = config.Health;
+            moleData.DefaultHealth = config.Health;
         }
     }
 }

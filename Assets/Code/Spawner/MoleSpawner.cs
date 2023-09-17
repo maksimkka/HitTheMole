@@ -1,5 +1,5 @@
 ﻿using Code.Cell;
-using Code.Grid;
+using Code.Logger;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using UnityEngine;
@@ -12,21 +12,26 @@ namespace Code.Spawner
         private readonly EcsFilterInject<Inc<CellData>> _cellDataFilter = default;
         private readonly EcsFilterInject<Inc<EmptyCellsData>> _emptyCellsDataFilter = default;
 
+        private float _currentTimeUntilSpawn;
+
         public void Run(IEcsSystems systems)
         {
             foreach (var entity in _moleSpawnerDataFilter.Value)
             {
                 ref var moleSpawner = ref _moleSpawnerDataFilter.Pools.Inc1.Get(entity);
+                Reload(ref moleSpawner);
             }
         }
 
         private void Reload(ref MoleSpawnerData moleSpawner)
         {
             moleSpawner.CurrentTimeUntilSpawn += Time.deltaTime;
+
             if (moleSpawner.CurrentTimeUntilSpawn >= moleSpawner.SpawnDelay)
             {
                 moleSpawner.CurrentTimeUntilSpawn = 0;
                 FillEmptyCellArray();
+                TurnAi(ref moleSpawner);
                 //Shoot(ref weapon);
             }
         }
@@ -49,14 +54,19 @@ namespace Code.Spawner
                 }
             }
         }
-
-        private void FindEmptyCell()
+        
+        private void TurnAi(ref MoleSpawnerData moleSpawner)
         {
-
-            foreach (var entity in _cellDataFilter.Value)
+            foreach (var emptyCellEntity in _emptyCellsDataFilter.Value)
             {
-                ref var cell = ref _cellDataFilter.Pools.Inc1.Get(entity);
-                if (cell.MoleInCell != null) continue;
+                ref var emptyCells = ref _emptyCellsDataFilter.Pools.Inc1.Get(emptyCellEntity);
+                if(emptyCells.EmptyCellsEntity.Count == 0) return;
+                int randomEmptyCellIndex = Random.Range(0, emptyCells.EmptyCellsEntity.Count);
+
+                ref var cellData = ref _cellDataFilter.Pools.Inc1.Get(emptyCells.EmptyCellsEntity[randomEmptyCellIndex]);
+
+                var mole = moleSpawner.MolesPool.GetObject(cellData.CellPosition, Quaternion.identity);
+                cellData.MoleInCell = mole.gameObject;
             }
         }
     }

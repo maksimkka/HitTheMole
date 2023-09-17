@@ -1,4 +1,5 @@
-﻿using Code.Cell;
+﻿using System.Collections.Generic;
+using Code.Cell;
 using Code.Logger;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
@@ -30,7 +31,8 @@ namespace Code.Grid
         
         private void CreateCells(ref GridData gridData)
         {
-            _emptyCellsData.Value.Add(_world.NewEntity());
+            ref var emptyCells = ref _emptyCellsData.Value.Add(_world.NewEntity());
+            emptyCells.EmptyCellsEntity = new List<int>();
             var defaultSpawnPosition = gridData.GridTransform.position;
             
             for (int x = 0; x < gridData.GridSideSize; x++)
@@ -46,6 +48,7 @@ namespace Code.Grid
                     var spawnedObject = Object.Instantiate(gridData.CellPrefab, currentSpawnPos, Quaternion.identity);
                     
                     var cellEntity = _world.NewEntity();
+                    //emptyCells.EmptyCellsEntity.Add(cellEntity);
                     ref var cellData = ref _cellData.Value.Add(cellEntity);
                     cellData.CellPosition = spawnedObject.transform.position;
                 }

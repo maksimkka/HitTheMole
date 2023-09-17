@@ -21,10 +21,10 @@ namespace Code.Pools
             _initWithInECS = initWithInEcs;
 
             objectPool = new Queue<T>(initialSize);
-            FillPool(initialSize, parentTransform);
+            FillPool(initialSize);
         }
         
-        private void FillPool(int fillCount, Transform parentObject = null)
+        private void FillPool(int fillCount)
         {
             for (int i = 0; i < fillCount; i++)
             {
@@ -33,7 +33,7 @@ namespace Code.Pools
                 obj.name = prefab.name +  countObject;
                 _initWithInECS?.Invoke(obj);
                 
-                ReturnObject(obj, parentObject);
+                ReturnObject(obj);
             }
         }
 
@@ -53,9 +53,9 @@ namespace Code.Pools
             return obj;
         }
 
-        public void ReturnObject(T obj, Transform parentObject = null)
+        public void ReturnObject(T obj)
         {
-            obj.gameObject.transform.parent = parentObject;
+            obj.gameObject.transform.parent = parentTransform;
             obj.gameObject.SetActive(false);
             objectPool.Enqueue(obj);
         }

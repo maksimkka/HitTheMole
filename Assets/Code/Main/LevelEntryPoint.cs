@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Code.Cell;
 using Code.Grid;
+using Code.Mole;
 using Code.Pools;
 using Code.Spawner;
 using Leopotam.EcsLite;
@@ -19,11 +21,11 @@ namespace Code.Main
         
         private EcsWorld _world;
         private EcsSystems _updateSystem;
+        private Camera _camera;
 
         private void Awake()
         {
             //ScreenSwitcher.Initialize(_screenService.screens);
-            Time.timeScale = 0;
         }
 
         private void Start()
@@ -60,12 +62,13 @@ namespace Code.Main
 
         private void InjectGameObjects()
         {
+            _camera = Camera.main;
             var gridSettings = FindObjectOfType<GridSettings>();
             var molesSpawnerSettings = FindObjectOfType<MolesSpawnerSettings>();
             var poolCommonParent = FindObjectOfType<PoolCommonParent>();
             foreach (var system in _systems)
             {
-                system.Value.Inject(gridSettings, molesSpawnerSettings, poolCommonParent);
+                system.Value.Inject(gridSettings, molesSpawnerSettings, poolCommonParent, _camera);
             }
         }
 
@@ -92,7 +95,13 @@ namespace Code.Main
                 .Add(new GridInit())
                 .Add(new MoleSpawnerInit());
 
-            //_systems[SystemType.Update]
+            _systems[SystemType.Update]
+                .Add(new MoleSpawner())
+                .Add(new TimerForReturningToPool())
+                .Add(new MoleHitter())
+                .Add(new ResetMoleSettings())
+                .Add(new MoleCleaner())
+                .Add(new CellsCleaner());
 
             //_systems[SystemType.FixedUpdate]
         }
