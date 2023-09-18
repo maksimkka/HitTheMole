@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 namespace Code.GameMode
 {
+    [DisallowMultipleComponent]
     public class GameModeSettings : MonoBehaviour
     {
         [field: SerializeField] public Button TimeModeButton { get; private set; }

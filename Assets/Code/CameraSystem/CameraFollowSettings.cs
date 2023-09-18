@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Code.CameraSystem
 {
+    [DisallowMultipleComponent]
     public class CameraFollowSettings : MonoBehaviour
     {
         [field: SerializeField] public CinemachineVirtualCamera FollowCamera { get; private set; }

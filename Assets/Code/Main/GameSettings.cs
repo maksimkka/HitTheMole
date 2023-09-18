@@ -2,6 +2,7 @@
 
 namespace Code.Main
 {
+    [DisallowMultipleComponent]
     public class GameSettings : MonoBehaviour
     {
         [field: SerializeField, Range(1, 10)] public int DamageMultiplier { get; private set; }

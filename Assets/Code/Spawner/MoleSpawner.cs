@@ -1,5 +1,4 @@
 ﻿using Code.Cell;
-using Code.Logger;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using UnityEngine;
@@ -31,8 +30,7 @@ namespace Code.Spawner
             {
                 moleSpawner.CurrentTimeUntilSpawn = 0;
                 FillEmptyCellArray();
-                TurnAi(ref moleSpawner);
-                //Shoot(ref weapon);
+                SpawnMole(ref moleSpawner);
             }
         }
 
@@ -55,7 +53,7 @@ namespace Code.Spawner
             }
         }
         
-        private void TurnAi(ref MoleSpawnerData moleSpawner)
+        private void SpawnMole(ref MoleSpawnerData moleSpawner)
         {
             foreach (var emptyCellEntity in _emptyCellsDataFilter.Value)
             {

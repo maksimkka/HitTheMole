@@ -2,6 +2,7 @@
 
 namespace Code.Grid
 {
+    [DisallowMultipleComponent]
     public class GridSettings : MonoBehaviour
     {
         [field: SerializeField] public GameObject CellPrefab { get; private set; }

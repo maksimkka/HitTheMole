@@ -1,6 +1,5 @@
 ﻿using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
-using UnityEngine;
 
 namespace Code.Mole
 {
@@ -21,7 +20,6 @@ namespace Code.Mole
                 ref var moleData = ref _moleData.Value.Get(returnToPoolRequest.EntityReturnedObject);
                 moleData.CurrentLifeTime = 0;
                 moleData.CurrentHealth = moleData.DefaultHealth;
-                //returnToPoolRequest.EntityReturnedObject = moleData.MoleGameObject.GetComponent<Collider>();
             }
         }
     }

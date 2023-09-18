@@ -1,5 +1,4 @@
 ﻿using Code.Effects;
-using Code.Logger;
 using Code.Score;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;

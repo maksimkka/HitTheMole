@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Code.Cell;
-using Code.Logger;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using UnityEngine;
@@ -26,7 +25,6 @@ namespace Code.Grid
 
             gridData.CellPrefab = _gridSettings.Value.CellPrefab;
             gridData.GridTransform = _gridSettings.Value.gameObject.transform;
-            gridData.CellSpacing = _gridSettings.Value.CellSpacing;
             gridData.GridSideSize = _gridSettings.Value.GridSideSize;
 
             CreateCells(ref gridData);
