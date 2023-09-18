@@ -7,7 +7,6 @@ namespace Code.Mole
 {
     public class MoleCleaner : IEcsRunSystem
     {
-        //private readonly EcsFilterInject<Inc<MoleData>> _moleDataFilter = default;
         private readonly EcsFilterInject<Inc<MoleSpawnerData>> _moleSpawnerDataFilter = default;
         private readonly EcsFilterInject<Inc<ReturnToPoolRequest>> _returnToPoolRequestFilter = default;
         private readonly EcsPoolInject<MoleData> _moleData = default;
@@ -17,7 +16,6 @@ namespace Code.Mole
             {
                 ref var moleSpawner = ref _moleSpawnerDataFilter.Pools.Inc1.Get(entity);
                 ReturnToPool(ref moleSpawner);
-                //moleSpawner.MolesPool.ReturnObject(moleData.MoleGameObject.GetComponent<Collider>());
             }
         }
 

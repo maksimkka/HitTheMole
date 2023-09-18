@@ -10,15 +10,15 @@ namespace Code.Pools
         private readonly Queue<T> objectPool;
         private readonly T prefab;
         private readonly Transform parentTransform;
-        private readonly Action<T> _initWithInECS;
+        private readonly Action<T> _initPool;
         private const int RefillCount = 15;
         private int countObject;
-        public ObjectPool(T prefab, Transform parentTransform, int initialSize = 10, Action<T> initWithInEcs = null)
+        public ObjectPool(T prefab, Transform parentTransform, int initialSize = 10, Action<T> initPool = null)
         {
             countObject = 0;
             this.prefab = prefab;
             this.parentTransform = parentTransform;
-            _initWithInECS = initWithInEcs;
+            _initPool = initPool;
 
             objectPool = new Queue<T>(initialSize);
             FillPool(initialSize);
@@ -31,7 +31,7 @@ namespace Code.Pools
                 countObject++;
                 T obj = Object.Instantiate(prefab, parentTransform);
                 obj.name = prefab.name +  countObject;
-                _initWithInECS?.Invoke(obj);
+                _initPool?.Invoke(obj);
                 
                 ReturnObject(obj);
             }

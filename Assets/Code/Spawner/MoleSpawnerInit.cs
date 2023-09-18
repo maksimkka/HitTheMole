@@ -22,7 +22,7 @@ namespace Code.Spawner
             var molePrefab = _spawnerSettings.Value.DefaultSpawnObject.GetComponent<Collider>();
 
             var molesPool = new ObjectPool<Collider>(molePrefab, _poolCommonParent.Value.transform, 45, 
-                initWithInEcs: InitMoles);
+                initPool: InitMoles);
 
             moleSpawnerData.MolesPool = molesPool;
             moleSpawnerData.SpawnDelay = _spawnerSettings.Value.SpawnDelay;

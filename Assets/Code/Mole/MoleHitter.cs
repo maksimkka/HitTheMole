@@ -1,4 +1,6 @@
-﻿using Code.Logger;
+﻿using Code.Effects;
+using Code.Logger;
+using Code.Score;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using UnityEngine;
@@ -7,8 +9,10 @@ namespace Code.Mole
 {
     public class MoleHitter : IEcsRunSystem
     {
-        private readonly EcsPoolInject<ReturnToPoolRequest> _returnToPoolRequestFilter = default;
         private readonly EcsFilterInject<Inc<MoleData>> _moleDataFilter = default;
+        private readonly EcsFilterInject<Inc<ScoreData>, Exc<ChangeScoreRequest>> _scoreDataFilter = default;
+        private readonly EcsPoolInject<ReturnToPoolRequest> _returnToPoolRequest = default;
+        private readonly EcsPoolInject<ChangeScoreRequest> _changeScoreRequest = default;
         private readonly EcsCustomInject<Camera> _camera;
         private IEcsSystems _systems;
 
@@ -42,9 +46,9 @@ namespace Code.Mole
 
                 if (moleData.CurrentHealth <= 0)
                 {
-                    var collider = moleData.MoleGameObject.GetComponent<Collider>();
-                    $"{collider.gameObject.name}".Colored(Color.cyan).Log();
+                    ParticleSystemController.GetParticle(EffectType.MoleDead, moleData.MoleGameObject.transform.position);
                     SendRequest(entity);
+                    SendChangeScoreRequest(moleData.DefaultHealth);
                 }
             }
         }
@@ -52,8 +56,17 @@ namespace Code.Mole
         private void SendRequest(int entity)
         {
             var requestEntity = _systems.GetWorld().NewEntity();
-            ref var returnToPoolRequest = ref _returnToPoolRequestFilter.Value.Add(requestEntity);
+            ref var returnToPoolRequest = ref _returnToPoolRequest.Value.Add(requestEntity);
             returnToPoolRequest.EntityReturnedObject = entity;
+        }
+
+        private void SendChangeScoreRequest(int moleHealth)
+        {
+            foreach (var entity in _scoreDataFilter.Value)
+            {
+                ref var changeScoreRequest = ref _changeScoreRequest.Value.Add(entity);
+                changeScoreRequest.MoleHealth = moleHealth;
+            }
         }
     }
 }

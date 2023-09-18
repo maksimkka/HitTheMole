@@ -1,4 +1,7 @@
-﻿using Leopotam.EcsLite;
+﻿using Code.Effects;
+using Code.GameMode;
+using Code.Health;
+using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using UnityEngine;
 
@@ -7,8 +10,9 @@ namespace Code.Mole
     public class TimerForReturningToPool : IEcsRunSystem
     {
         private readonly EcsFilterInject<Inc<MoleData>> _moleDataFilter = default;
-        //private readonly EcsFilterInject<Inc<ReturnToPoolRequest>> _returnToPoolRequest = default;
+        private readonly EcsFilterInject<Inc<HealthData, SurvivalModeMarker>, Exc<ChangeHealthRequest>> _healthFilter = default;
         private readonly EcsPoolInject<ReturnToPoolRequest> _returnToPoolRequest = default;
+        private readonly EcsPoolInject<ChangeHealthRequest> _changeHealthRequest = default;
         private IEcsSystems _systems;
 
         public void Run(IEcsSystems systems)
@@ -29,7 +33,8 @@ namespace Code.Mole
                 moleData.CurrentLifeTime += Time.deltaTime;
                 if (moleData.CurrentLifeTime >= moleData.DefaultLifeTime)
                 {
-                    //moleData.CurrentLifeTime = 0;
+                    ParticleSystemController.GetParticle(EffectType.MoleHid, moleData.MoleGameObject.transform.position);
+                    SendChangeHealthRequest(moleData.DefaultHealth);
                     SendRequest(entity);
                 }
             }
@@ -39,11 +44,17 @@ namespace Code.Mole
         {
             var requestEntity = _systems.GetWorld().NewEntity();
             ref var returnToPoolRequest = ref _returnToPoolRequest.Value.Add(requestEntity);
-            //
-            // moleData.CurrentLifeTime = 0;
-            // moleData.CurrentHealth = moleData.DefaultHealth;
+            
             returnToPoolRequest.EntityReturnedObject = entity;
-            //returnToPoolRequest.EntityReturnedObject = moleData.MoleGameObject.GetComponent<Collider>();
+        }
+        
+        private void SendChangeHealthRequest(int moleHealth)
+        {
+            foreach (var entity in _healthFilter.Value)
+            {
+                ref var changeScoreRequest = ref _changeHealthRequest.Value.Add(entity);
+                changeScoreRequest.MoleHealth = moleHealth;
+            }
         }
     }
 }

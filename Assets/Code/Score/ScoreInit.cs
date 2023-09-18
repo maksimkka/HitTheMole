@@ -1,4 +1,5 @@
-﻿using Code.Main;
+﻿using System.Text;
+using Code.Main;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 
@@ -12,11 +13,18 @@ namespace Code.Score
         public void Init(IEcsSystems systems)
         {
             var entity = systems.GetWorld().NewEntity();
-            ref var scoreData = ref _scoreData.Value.Get(entity);
+            ref var scoreData = ref _scoreData.Value.Add(entity);
             scoreData.CurrentScore = 0;
+            scoreData.ScoreMultiplier = _gameSettings.Value.ScoreMultiplier;
             scoreData.ScoreToWin = _gameSettings.Value.NumberScoreToWin;
             scoreData.ScoreText = _scoreSettings.Value.ScoreText;
-            scoreData.ScoreText.text = scoreData.CurrentScore.ToString();
+            scoreData.ScoreStringBuilder = new StringBuilder();
+            scoreData.ScoreStringBuilder.Clear();
+            scoreData.ScoreStringBuilder.Append(scoreData.CurrentScore);
+            scoreData.ScoreStringBuilder.Append($" / ");
+            scoreData.ScoreStringBuilder.Append(scoreData.ScoreToWin);
+            
+            scoreData.ScoreText.text = scoreData.ScoreStringBuilder.ToString();
         }
     }
 }
